@@ -22,9 +22,10 @@ class FilterParallelizer:
         """
         :return: A List of all the companies available on the MSE website
         """
-        sample = 'https://www.mse.mk/en/stats/symbolhistory/ALK'
 
-        response = requests.post(sample)
+        sample = 'https://www.mse.mk/en/stats/symbolhistory/KMB'
+
+        response = requests.get(sample)
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -39,23 +40,30 @@ class FilterParallelizer:
 
         return valid_company_names
 
+
     def __create_table(self, company_data: list):
         data = list(map(lambda x: x.values(), company_data))
         df = pd.DataFrame(data=data)
         df.columns = company_data[0].keys()
         return df
 
+    # Part of the 3rd filter
     def parse_cells(self, row):
+
+        # Number formatter
+        translation_table = str.maketrans({',': '.',
+                                           '.': ','})
+
         cells = row.find_all('td')
         date = cells[0].text
-        last_trade_price = cells[1].text
-        max = cells[2].text
-        min = cells[3].text
-        avg_price = cells[4].text
-        chg = cells[5].text
+        last_trade_price = cells[1].text.translate(translation_table)
+        max = cells[2].text.translate(translation_table)
+        min = cells[3].text.translate(translation_table)
+        avg_price = cells[4].text.translate(translation_table)
+        chg = cells[5].text.translate(translation_table)
         volume = cells[6].text
-        turnover_in_best = cells[7].text
-        total_turnover = cells[8].text
+        turnover_in_best = cells[7].text.translate(translation_table)
+        total_turnover = cells[8].text.translate(translation_table)
 
         item = {
             'Date': date,
@@ -116,7 +124,7 @@ class FilterParallelizer:
             response = requests.post(url, timeout=(25, 60))
 
             if response.status_code != 200:
-                raise ConnectionError('Failed to get a significant response from the page')
+                raise ConnectionError(f'Failed to get a significant response from the page; Response Code: {response.status_code}')
 
             soup = BeautifulSoup(response.text, 'html.parser')
 

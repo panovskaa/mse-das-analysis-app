@@ -9,10 +9,6 @@ from datetime import datetime, timedelta
 from exceptions import NoOpException, AlreadyUpdatedException
 
 
-# 1st Filter
-
-
-
 class FilterParallelizer:
     time_start = None
     time_end = None
@@ -21,6 +17,7 @@ class FilterParallelizer:
     def __init__(self):
         self.companies = self.__fetch_companies()
 
+    # 1st Filter
     def __fetch_companies(self):
         """
         :return: A List of all the companies available on the MSE website

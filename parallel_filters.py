@@ -16,7 +16,7 @@ class FilterParallelizer:
     all_companies_data = dict()
 
     def __init__(self):
-        self.companies = ['ADIN']
+        self.companies = self.__fetch_companies()
 
     # 1st Filter
     def __fetch_companies(self):

@@ -6,20 +6,21 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
-from exceptions import NoOpException, AlreadyUpdatedException
+from exceptions import NoOpException
 
 
 class FilterParallelizer:
+
     time_start = None
     time_end = None
     all_companies_data = dict()
 
     def __init__(self):
-        self.companies = self.__fetch_companies()
+        self.companies = ['ADIN']
 
     # 1st Filter
     def __fetch_companies(self):
-        """
+        """b
         :return: A List of all the companies available on the MSE website
         """
 
@@ -40,11 +41,11 @@ class FilterParallelizer:
 
         return valid_company_names
 
-
     def __create_table(self, company_data: list):
-        data = list(map(lambda x: x.values(), company_data))
-        df = pd.DataFrame(data=data)
-        df.columns = company_data[0].keys()
+
+        df = pd.DataFrame(company_data)
+        df.columns = ['Date', 'LastTradePrice', 'Max', 'Min', 'AvgPrice', '%chg', "Volume", 'TurnoverBestMKD', 'TotalTurnoverMKD']
+
         return df
 
     # Part of the 3rd filter
@@ -65,32 +66,21 @@ class FilterParallelizer:
         turnover_in_best = cells[7].text.translate(translation_table)
         total_turnover = cells[8].text.translate(translation_table)
 
-        item = {
-            'Date': date,
-            'Last trade price': last_trade_price,
-            'Max': max,
-            'Min': min,
-            'AvgPrice': avg_price,
-            '%chg.': chg,
-            'Volume': volume,
-            'TurnoverBEST_MKD': turnover_in_best,
-            'TotalTurnoverMKD': total_turnover
-        }
+        return [date, last_trade_price, max, min, avg_price, chg, volume, turnover_in_best, total_turnover]
 
-        return item
-
-    def __get_site_data(self, soup, company):
+    def __get_site_data(self, soup):
         # Accepts a BeautifulSoup object
         table = soup.find_all('tbody')
         if len(table) == 0:
             return None
         table = table[0]
         table_rows = table.find_all('tr')
-        for row in table_rows:
-            item = self.parse_cells(row)
-            company.append(item)
+        ret_table = []
 
-        return company
+        for row in table_rows:
+            ret_table.append(self.parse_cells(row))
+
+        return ret_table
 
     def __get_x_days_ago_of(self, date, days):
         date_from = datetime.strptime(date, '%m/%d/%Y') - timedelta(days=days)
@@ -123,18 +113,18 @@ class FilterParallelizer:
             url = base_url + company + "?" + "FromDate=" + date_from + '&ToDate=' + date_to
             response = requests.post(url, timeout=(25, 60))
 
-            if response.status_code != 200:
-                raise ConnectionError(f'Failed to get a significant response from the page; Response Code: {response.status_code}')
+            while response.status_code != 200:
+                response = requests.post(url, timeout=(25, 60))
 
             soup = BeautifulSoup(response.text, 'html.parser')
 
-            yearly_thread = Thread(target=self.__get_site_data, args=(soup, company_info))
-            yearly_thread.start()
+            data_append = self.__get_site_data(soup)
+
+            if data_append is not None:
+                company_info += data_append
 
             date_to = date_from
             date_from = self.__get_x_days_ago_of(date_to, 365)
-
-            yearly_thread.join()
 
         table = self.__create_table(company_info)
         table.to_csv(f'./data/{company}.csv')
@@ -146,8 +136,6 @@ class FilterParallelizer:
         dataframes = dict()
         threadpool = []
         today = str(datetime.today().strftime('%m/%d/%Y'))
-
-        count_already_upd = 0
 
         self.time_start = time.time()
 
@@ -161,7 +149,6 @@ class FilterParallelizer:
                 yesterday = (datetime.today() - timedelta(days=1)).strftime('%m/%d/%Y')
 
                 if today == search_from or yesterday == search_from:
-                    count_already_upd += 1
                     continue
 
                 dataframes[cmp] = curr_df.drop(columns=['Unnamed: 0'])
@@ -170,9 +157,6 @@ class FilterParallelizer:
             thread = Thread(target=self.__get_data_from_to, args=(cmp, search_from, today))
             thread.start()
             threadpool.append(thread)
-
-        if count_already_upd == len(self.companies):
-            raise AlreadyUpdatedException("Database is already up to date.")
 
         for thread in threadpool:
             thread.join()
@@ -188,9 +172,9 @@ class FilterParallelizer:
         self.time_end = time.time()
 
     def get_time_last_scrape(self):
+
         if self.time_end is None:
-            raise NoOpException("No operation has yet been performed, please fill the database first using fill_db,"
-                                "or, call a fetch missing operation by fill_missing_data")
+            raise NoOpException('Please fill the database first by running the fill_data() method')
 
         time_s = (self.time_end - self.time_start)
 

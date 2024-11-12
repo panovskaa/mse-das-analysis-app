@@ -26,45 +26,45 @@ class FilterParallelizer:
         """
 
         base = 'https://www.mse.mk/en/issuers/shares-listing'
+        special_reporting = 'https://www.mse.mk/prefs/issuers/JSC-with-special-reporting-obligations'
+        free_market = 'https://www.mse.mk/prefs/issuers/free-market'
 
         response = requests.get(base)
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        links = map(lambda x: x.get('href'), soup.find_all('a', attrs={'href': re.compile("^/en/issuer/")}))
-
+        links = map(
+            lambda x: x.get('href'),
+            soup.find_all('a', attrs={'href': re.compile("^/en/issuer/")})
+        )
 
         valid_company_names = []
 
-        for link in links:
-            resp = requests.get('https://www.mse.mk' + str(link))
+        for issuer_profile in links:
+            resp = requests.get('https://www.mse.mk' + str(issuer_profile))
             soup = BeautifulSoup(resp.text, 'html.parser')
-            valid_company_names += list(map(lambda x: None if any(char.isdigit() for char in x.text) else x.text, soup.select('#symbols > li > a')))
-
-        special_reporting = 'https://www.mse.mk/prefs/issuers/JSC-with-special-reporting-obligations'
-        free_market = 'https://www.mse.mk/prefs/issuers/free-market'
+            valid_company_names += list(map
+                                        (lambda x: None if any(char.isdigit() for char in x.text) else x.text,
+                                         soup.select('#symbols > li > a'))
+                                        )
 
         resp = requests.get(special_reporting)
-
         soup = BeautifulSoup(resp.text, 'html.parser')
-
-        print()
-
-        valid_company_names += list(map(lambda x: x.text, soup.select('#otherlisting-table > tbody > tr > td:nth-child(1) > a')))
+        valid_company_names += list(map
+                                    (lambda x: x.text,
+                                     soup.select('#otherlisting-table > tbody > tr > td:nth-child(1) > a'))
+                                    )
 
         resp = requests.get(free_market)
-
         soup = BeautifulSoup(resp.text, 'html.parser')
-
-        valid_company_names += list(map(lambda x: x.text, soup.select('#otherlisting-table > tbody > tr > td:nth-child(1) > a')))
+        valid_company_names += list(map
+                                    (lambda x: x.text,
+                                     soup.select('#otherlisting-table > tbody > tr > td:nth-child(1) > a'))
+                                    )
 
         valid_company_names = list(set(valid_company_names))
 
-        print(len(valid_company_names))
-
         final = [company for company in valid_company_names if company is not None]
-
-        print(len(final))
 
         return final
 

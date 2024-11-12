@@ -5,6 +5,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+import re
 
 from exceptions import NoOpException
 
@@ -24,22 +25,48 @@ class FilterParallelizer:
         :return: A List of all the companies available on the MSE website
         """
 
-        sample = 'https://www.mse.mk/en/stats/symbolhistory/KMB'
+        base = 'https://www.mse.mk/en/issuers/shares-listing'
 
-        response = requests.get(sample)
+        response = requests.get(base)
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        company_names = soup.select('.form-control option')
+        links = map(lambda x: x.get('href'), soup.find_all('a', attrs={'href': re.compile("^/en/issuer/")}))
 
-        # GETS COMPANY NAMES FROM A SAMPLE URL
+
         valid_company_names = []
 
-        for name in company_names:
-            if not (any(char.isdigit() for char in name.text)):
-                valid_company_names.append(name.text)
+        for link in links:
+            resp = requests.get('https://www.mse.mk' + str(link))
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            valid_company_names += list(map(lambda x: None if any(char.isdigit() for char in x.text) else x.text, soup.select('#symbols > li > a')))
 
-        return valid_company_names
+        special_reporting = 'https://www.mse.mk/prefs/issuers/JSC-with-special-reporting-obligations'
+        free_market = 'https://www.mse.mk/prefs/issuers/free-market'
+
+        resp = requests.get(special_reporting)
+
+        soup = BeautifulSoup(resp.text, 'html.parser')
+
+        print()
+
+        valid_company_names += list(map(lambda x: x.text, soup.select('#otherlisting-table > tbody > tr > td:nth-child(1) > a')))
+
+        resp = requests.get(free_market)
+
+        soup = BeautifulSoup(resp.text, 'html.parser')
+
+        valid_company_names += list(map(lambda x: x.text, soup.select('#otherlisting-table > tbody > tr > td:nth-child(1) > a')))
+
+        valid_company_names = list(set(valid_company_names))
+
+        print(len(valid_company_names))
+
+        final = [company for company in valid_company_names if company is not None]
+
+        print(len(final))
+
+        return final
 
     def __create_table(self, company_data: list):
 

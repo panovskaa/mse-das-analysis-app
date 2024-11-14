@@ -33,14 +33,12 @@ class FilterParallelizer:
 
         company_names = soup.select('.form-control option')
 
-        # GETS COMPANY NAMES FROM A SAMPLE URL
-        valid_company_names = []
-
-        for name in company_names:
-            if not (any(char.isdigit() for char in name.text)):
-                valid_company_names.append(name.text)
-
-        return valid_company_names
+        return list(
+            map(
+                lambda comp: comp.text,
+                filter(lambda comp: not any(char.isdigit() for char in comp.text), company_names)
+            )
+        )
 
     def __create_table(self, company_data: list):
 

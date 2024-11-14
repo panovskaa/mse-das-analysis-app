@@ -5,7 +5,6 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-import re
 
 from exceptions import NoOpException
 
@@ -18,55 +17,30 @@ class FilterParallelizer:
 
     def __init__(self):
         self.companies = self.__fetch_companies()
+        print(self.companies)
 
     # 1st Filter
     def __fetch_companies(self):
-        """b
+        """
         :return: A List of all the companies available on the MSE website
         """
 
-        base = 'https://www.mse.mk/en/issuers/shares-listing'
-        special_reporting = 'https://www.mse.mk/prefs/issuers/JSC-with-special-reporting-obligations'
-        free_market = 'https://www.mse.mk/prefs/issuers/free-market'
+        sample = 'https://www.mse.mk/en/stats/symbolhistory/KMB'
 
-        response = requests.get(base)
+        response = requests.get(sample)
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        links = map(
-            lambda x: x.get('href'),
-            soup.find_all('a', attrs={'href': re.compile("^/en/issuer/")})
-        )
+        company_names = soup.select('.form-control option')
 
+        # GETS COMPANY NAMES FROM A SAMPLE URL
         valid_company_names = []
 
-        for issuer_profile in links:
-            resp = requests.get('https://www.mse.mk' + str(issuer_profile))
-            soup = BeautifulSoup(resp.text, 'html.parser')
-            valid_company_names += list(map
-                                        (lambda x: None if any(char.isdigit() for char in x.text) else x.text,
-                                         soup.select('#symbols > li > a'))
-                                        )
+        for name in company_names:
+            if not (any(char.isdigit() for char in name.text)):
+                valid_company_names.append(name.text)
 
-        resp = requests.get(special_reporting)
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        valid_company_names += list(map
-                                    (lambda x: x.text,
-                                     soup.select('#otherlisting-table > tbody > tr > td:nth-child(1) > a'))
-                                    )
-
-        resp = requests.get(free_market)
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        valid_company_names += list(map
-                                    (lambda x: x.text,
-                                     soup.select('#otherlisting-table > tbody > tr > td:nth-child(1) > a'))
-                                    )
-
-        valid_company_names = list(set(valid_company_names))
-
-        final = [company for company in valid_company_names if company is not None]
-
-        return final
+        return valid_company_names
 
     def __create_table(self, company_data: list):
 

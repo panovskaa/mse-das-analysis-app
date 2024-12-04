@@ -1,6 +1,8 @@
-#Architecture Description
+# Architecture Description
 
 ## Conceptual Architecture
+
+![Conceptual_Architecture](https://github.com/user-attachments/assets/77c5991d-31ca-4ed9-a637-a6c44257e784)
 
 The system has 4 main central functions according to the SRS (not in any order):
     1.	Filtering Stock Data Observations
@@ -17,6 +19,8 @@ is also a component that sends information to the Stock Service which filters ac
 
 ## Execution Architecture
 
+![Execution_Architecture](https://github.com/user-attachments/assets/39361966-ce81-4c0e-b79c-c6de2bae720b)
+
 The Web App GUI is mapped 1:1 in the execution diagram. The same thing is done with the Stock Service.
 The user interacts with the server through HTTP since it is a Web Application. The Stock Service gives data to user
 as mentioned in the Execution architecture, so this logic is the same as in the Conceptual Architecture.
@@ -26,6 +30,8 @@ run at 00:00 every midnight and generate data internally within the system, and 
 asynchronously to update the database.
 
 ## Implementation Architecture
+
+![Implementation_Architecture](https://github.com/user-attachments/assets/95639cc2-9659-42e8-9eae-13e53c813058)
 
 Again, the Web App UI is a 1:1 mapping from the Conceptual Architecture into this one. The back-end used in the application
 is Spring Boot. The Spring application runs inside a Tomcat Server Container. The layered web architecture uses

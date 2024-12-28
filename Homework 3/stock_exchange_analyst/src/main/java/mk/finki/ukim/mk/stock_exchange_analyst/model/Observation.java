@@ -60,4 +60,5 @@ public class Observation implements Comparable<Observation> {
         Number n = (Number) num;
         return format.format(n);
     }
+
 }

@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import mk.finki.ukim.mk.stock_exchange_analyst.model.Observation;
 import mk.finki.ukim.mk.stock_exchange_analyst.service.StockService;
+import mk.finki.ukim.mk.stock_exchange_analyst.service.TAService;
+import mk.finki.ukim.mk.stock_exchange_analyst.service.exception.NoSuchCompanyException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,9 +22,11 @@ import java.util.List;
 public class TechnicalController {
 
     private final StockService stockService;
+    private final TAService taService;
 
-    public TechnicalController(StockService stockService) {
+    public TechnicalController(StockService stockService, TAService taService) {
         this.stockService = stockService;
+        this.taService = taService;
     }
 
     @GetMapping
@@ -41,9 +45,20 @@ public class TechnicalController {
         }
 
         if (dateFrom != null && dateTo != null && company != null)  {
+
+            try {
+                taService.getLatest(company);
+            } catch (NoSuchCompanyException exc) {
+                model.addAttribute("error", exc.getMessage());
+                return "technical";
+            }
+
+            model.addAttribute("oscillatorSummary", taService.oscillatorSummary(company));
+            model.addAttribute("MASummary", taService.MASummary(company));
             model.addAttribute("dateFrom", dateFrom);
             model.addAttribute("company", company);
             model.addAttribute("dateTo", dateTo);
+            model.addAttribute("taPoint", taService.getLatest(company));
         }
 
         return "technical";
@@ -62,7 +77,7 @@ public class TechnicalController {
 
         session.setAttribute("observationsPresent", observationList);
 
-        return String.format("redirect:/technical?company=%s&dateFrom=%s&dateTo=%s",company, dateFrom, dateTo);
+        return String.format("redirect:/technical?company=%s&dateFrom=%s&dateTo=%s", company, dateFrom, dateTo);
     }
 
 }

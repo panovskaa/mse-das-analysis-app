@@ -21,17 +21,31 @@ public class DataFetcher {
         this.refreshService = refreshService;
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // Update the database at midnight, this is an active component
+    @Scheduled(cron = "0 0 0 * * *") // Update the database at midnight
     @PostConstruct
     public void updateDatabase() throws InterruptedException {
-
-        String[] command = {"python", "src/main/resources/python-scripts/parallel_filters.py"};
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        String[] fillDB = {"python", "src/main/resources/python-scripts/parallel_filters.py"};
+        String[] makeAnalysis = {"python", "src/main/resources/python-scripts/technical_analysis.py"};
+        ProcessBuilder pbFillDb = new ProcessBuilder(fillDB);
+        ProcessBuilder pbMakeAnalysis = new ProcessBuilder(makeAnalysis);
 
         try {
-            Process process = processBuilder.start();
+            Process filling = pbFillDb.start();
 
-            process.waitFor();
+            // Capture and print the output stream of the analysis process
+
+            filling.waitFor();
+
+            Process analysis = pbMakeAnalysis.start();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(analysis.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+
+            analysis.waitFor();
 
             refreshService.refreshDatabase();
         } catch (Throwable e) {
@@ -39,6 +53,3 @@ public class DataFetcher {
         }
     }
 }
-
-
-

@@ -146,7 +146,7 @@ class FilterParallelizer:
                 search_from = self.__get_x_days_ago_of(today, 365 * 10)
             else:
                 curr_df = pd.read_csv(f'src/main/resources/db/{cmp}.csv')
-                search_from = str(datetime.strptime(curr_df.Date[0], '%m/%d/%Y')).strftime('%m/%d/%Y')
+                search_from = (datetime.strptime(curr_df.Date[0], '%m/%d/%Y')).strftime('%m/%d/%Y')
                 yesterday = (datetime.today() - timedelta(days=1)).strftime('%m/%d/%Y')
 
                 if today == search_from or yesterday == search_from:

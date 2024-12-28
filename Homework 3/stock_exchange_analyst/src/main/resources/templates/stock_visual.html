@@ -24,6 +24,7 @@
             font-size: 12px;
         }
 
+
         .footer-custom {
             background-color: #333333;
             color: #ffffff;
@@ -44,6 +45,20 @@
 
         main {
             flex: 1;
+        }
+
+        #filterForm {
+            width: 70%;
+            padding: 25px;
+            background: #f5f5f5;
+            border-radius: 45px;
+        }
+
+        #filtering {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
         }
 
         .table-container {
@@ -113,36 +128,38 @@
         </div>
     </header>
 
-    <div class="container my-5">
-        <section id="filterForm" class="mb-5">
-            <h2>Filter Stock Data</h2>
-            <form id="dataForm" class="row g-3" th:method="POST" th:action="@{/stock-visual}">
-                <div class="col-md-4">
-                    <label for="dateFrom" class="form-label">From Date:</label>
-                    <input type="date" id="dateFrom" name="dateFrom" placeholder="From" class="form-control"
-                           th:value="${dateFrom}"
-                           required>
-                </div>
-                <div class="col-md-4">
-                    <label for="dateTo" class="form-label">To Date:</label>
-                    <input type="date" id="dateTo" name="dateTo" class="form-control" placeholder="To"
-                           th:value="${dateTo}"
-                           required>
-                </div>
-                <div class="col-md-4 align-self-end">
-                    <button type="submit" id='sendForm' class="btn btn-primary w-100">Filter</button>
-                </div>
-                <div class="col-md-4 align-self-end">
-                    <select id="companyDropdown" name="company" class="form-select mb-3">
-                        <option th:each="companyPresent : ${companies}"
-                                th:text="${companyPresent}"
-                                th:selected="${companyPresent == company}"
-                        >
-                    </select>
-                </div>
+    <section class="container my-5">
+        <div id="filtering">
+            <div id="filterForm" class="mb-5">
+                <h2>Filter Stock Data</h2>
+                <form id="dataForm" class="row g-3" th:method="POST" th:action="@{/stock-visual}">
+                    <div class="col-md-4">
+                        <label for="dateFrom" class="form-label">From Date:</label>
+                        <input type="date" id="dateFrom" name="dateFrom" placeholder="From" class="form-control"
+                               th:value="${dateFrom}"
+                               required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dateTo" class="form-label">To Date:</label>
+                        <input type="date" id="dateTo" name="dateTo" class="form-control" placeholder="To"
+                               th:value="${dateTo}"
+                               required>
+                    </div>
+                    <div class="col-md-4 align-self-end">
+                        <button type="submit" id='sendForm' class="btn btn-primary w-100">Filter</button>
+                    </div>
+                    <div class="col-md-4 align-self-end">
+                        <select id="companyDropdown" name="company" class="form-select mb-3">
+                            <option th:each="companyPresent : ${companies}"
+                                    th:text="${companyPresent}"
+                                    th:selected="${companyPresent == company}"
+                            >
+                        </select>
+                    </div>
 
-            </form>
-        </section>
+                </form>
+            </div>
+        </div>
 
         <section id="visualization" class="graph-table-container">
 
@@ -201,7 +218,7 @@
                 </div>
             </div>
         </section>
-    </div>
+    </section>
 </main>
 
 <!-- foot -->

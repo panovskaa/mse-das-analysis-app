@@ -12,9 +12,6 @@ import java.io.InputStreamReader;
 @Component
 public class DataFetcher {
 
-    @Value("${database.update.path}")
-    private String scriptRun;
-
     private final DatabaseRefreshService refreshService;
 
     public DataFetcher(DatabaseRefreshService refreshService) {
@@ -25,10 +22,13 @@ public class DataFetcher {
     @PostConstruct
     public void updateDatabase() throws InterruptedException {
         String[] fillDB = {"python", "src/main/resources/python-scripts/parallel_filters.py"};
-        String[] makeAnalysis = {"python", "src/main/resources/python-scripts/technical_analysis.py"};
+        String[] makeTA = {"python", "src/main/resources/python-scripts/technical_analysis.py"};
+        String[] makeFA = {"python", "src/main/resources/python-scripts/fundamental_analysis.py"};
         String[] predict = {"python", "src/main/resources/python-scripts/lstm.py"};
+
         ProcessBuilder pbFillDb = new ProcessBuilder(fillDB);
-        ProcessBuilder pbMakeAnalysis = new ProcessBuilder(makeAnalysis);
+        ProcessBuilder pbMakeTA = new ProcessBuilder(makeTA);
+        ProcessBuilder pbMakeFA = new ProcessBuilder(makeFA);
         ProcessBuilder pbPredicting = new ProcessBuilder(predict);
 
         try {
@@ -41,9 +41,9 @@ public class DataFetcher {
             System.out.println("\033[0;32m" + String.format("%41s", "UPDATE SUCCESS") + "\033[0m");
             System.out.println("\033[0;34m" + String.format("================%8s TECHNICAL ANALYSIS %9s================", " ", " ") + "\033[0m");
 
-            Process analysis = pbMakeAnalysis.start();
+            Process TA = pbMakeTA.start();
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(analysis.getInputStream()))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(TA.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] parts = line.split(":");
@@ -51,7 +51,23 @@ public class DataFetcher {
                 }
             }
 
-            analysis.waitFor();
+            System.out.println("\033[0;32m" + String.format("%46s", "TECHNICAL ANALYSIS SUCCESS") + "\033[0m");
+            TA.waitFor();
+
+            System.out.println("\033[0;34m" + String.format("================%7s FUNDAMENTAL ANALYSIS %8s================", " ", " ") + "\033[0m");
+
+            Process FA = pbMakeFA.start();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(FA.getErrorStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println("\033[0;31m" + line);
+                }
+            }
+
+
+            FA.waitFor();
+            System.out.println("\033[0;32m" + String.format("%48s", "FUNDAMENTAL ANALYSIS SUCCESS") + "\033[0m");
 
             System.out.println("\033[0;34m" + String.format("================%6s MODEL PRICE PREDICTION %6s================", " ", " ") + "\033[0m");
 
@@ -65,6 +81,7 @@ public class DataFetcher {
             }
 
             predicting.waitFor();
+            System.out.println("\033[0;32m" + String.format("%49s", "MODEL PRICE PREDICTION SUCCESS") + "\033[0m");
             refreshService.refreshDatabase();
 
         } catch (Throwable e) {

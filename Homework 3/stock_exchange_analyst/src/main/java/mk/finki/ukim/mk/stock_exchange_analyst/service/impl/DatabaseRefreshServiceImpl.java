@@ -1,6 +1,7 @@
 package mk.finki.ukim.mk.stock_exchange_analyst.service.impl;
 
 import mk.finki.ukim.mk.stock_exchange_analyst.repository.PredictionRepository;
+import mk.finki.ukim.mk.stock_exchange_analyst.repository.SentimentRepository;
 import mk.finki.ukim.mk.stock_exchange_analyst.repository.StockRepository;
 import mk.finki.ukim.mk.stock_exchange_analyst.repository.TAPointRepository;
 import mk.finki.ukim.mk.stock_exchange_analyst.service.DatabaseRefreshService;
@@ -12,11 +13,13 @@ public class DatabaseRefreshServiceImpl implements DatabaseRefreshService {
     private final StockRepository stockRepository;
     private final TAPointRepository taPointRepository;
     private final PredictionRepository predictionRepository;
+    private final SentimentRepository sentimentRepository;
 
-    public DatabaseRefreshServiceImpl(StockRepository stockRepository, TAPointRepository taPointRepository, PredictionRepository predictionRepository) {
+    public DatabaseRefreshServiceImpl(StockRepository stockRepository, TAPointRepository taPointRepository, PredictionRepository predictionRepository, SentimentRepository sentimentRepository) {
         this.stockRepository = stockRepository;
         this.taPointRepository = taPointRepository;
         this.predictionRepository = predictionRepository;
+        this.sentimentRepository = sentimentRepository;
     }
 
     @Override
@@ -24,5 +27,6 @@ public class DatabaseRefreshServiceImpl implements DatabaseRefreshService {
         this.stockRepository.update();
         this.taPointRepository.update();
         this.predictionRepository.update();
+        this.sentimentRepository.update();
     }
 }

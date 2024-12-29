@@ -2,6 +2,7 @@ package mk.finki.ukim.mk.stock_exchange_analyst.service.impl;
 
 import mk.finki.ukim.mk.stock_exchange_analyst.model.Prediction;
 import mk.finki.ukim.mk.stock_exchange_analyst.repository.PredictionRepository;
+import mk.finki.ukim.mk.stock_exchange_analyst.repository.SentimentRepository;
 import mk.finki.ukim.mk.stock_exchange_analyst.service.PredictionService;
 import mk.finki.ukim.mk.stock_exchange_analyst.service.exception.NoSuchCompanyException;
 import org.springframework.stereotype.Service;

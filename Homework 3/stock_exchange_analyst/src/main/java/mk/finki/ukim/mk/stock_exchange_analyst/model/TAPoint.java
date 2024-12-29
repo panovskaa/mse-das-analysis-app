@@ -11,29 +11,30 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 public class TAPoint {
+
     private LocalDate date;
-    private Double price;
-    private Double RSI;
-    private Double KSTOCH;
-    private Double DSTOCH;
-    private Double ROC;
-    private Double MOMENTUM;
-    private Double WILLIAMS;
-    private Double sma1;
-    private Double sma7;
-    private Double sma30;
-    private Double ema1;
-    private Double ema7;
-    private Double ema30;
-    private Double wma1;
-    private Double wma7;
-    private Double wma30;
-    private Double dema1;
-    private Double dema7;
-    private Double dema30;
-    private Double tema1;
-    private Double tema7;
-    private Double tema30;
+    private Double    price;
+    private Double    RSI;
+    private Double    KSTOCH;
+    private Double    DSTOCH;
+    private Double    ROC;
+    private Double    MOMENTUM;
+    private Double    WILLIAMS;
+    private Double    sma1;
+    private Double    sma7;
+    private Double    sma30;
+    private Double    ema1;
+    private Double    ema7;
+    private Double    ema30;
+    private Double    wma1;
+    private Double    wma7;
+    private Double    wma30;
+    private Double    dema1;
+    private Double    dema7;
+    private Double    dema30;
+    private Double    tema1;
+    private Double    tema7;
+    private Double    tema30;
 
     public List<Oscillator> oscillators() {
         return List.of(

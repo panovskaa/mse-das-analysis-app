@@ -12,7 +12,7 @@ import java.util.Locale;
 @AllArgsConstructor
 public class Prediction {
 
-    private final Double    price;
+    private final Double price;
     private final LocalDate date;
 
     private final static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("M/d/yyyy");

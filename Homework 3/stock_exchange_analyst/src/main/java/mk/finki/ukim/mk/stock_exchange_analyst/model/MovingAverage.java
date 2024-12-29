@@ -10,9 +10,9 @@ import java.util.function.BiFunction;
 @Data
 @AllArgsConstructor
 public class MovingAverage {
-    private String                             name;
-    private Double                             price;
-    private Double                             value;
+    private String name;
+    private Double price;
+    private Double value;
     private BiFunction<Double, Double, String> indicator;
 
     private final static NumberFormat format = NumberFormat.getInstance(Locale.GERMAN);

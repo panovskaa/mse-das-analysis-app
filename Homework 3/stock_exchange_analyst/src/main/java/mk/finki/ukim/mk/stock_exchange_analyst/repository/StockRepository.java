@@ -60,9 +60,9 @@ public class StockRepository {
     public List<Observation> getRecordsFromTo(String company, LocalDate from, LocalDate to) {
         return companies.get(company)
                 .stream()
-                .filter(obs -> obs.getDate().isBefore(to.plusDays(1))
+                .filter(obs -> obs.date().isBefore(to.plusDays(1))
                         &&
-                        obs.getDate().isAfter(from.minusDays(1)))
+                        obs.date().isAfter(from.minusDays(1)))
                 .sorted()
                 .toList();
     }
@@ -101,6 +101,8 @@ public class StockRepository {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("M/d/yyyy");
         NumberFormat numFormat = NumberFormat.getInstance(Locale.GERMANY);
 
+        Optional<Observation> retval = Optional.empty();
+
         try {
             LocalDate date = LocalDate.parse(ls.get(0), dtf);
             Double lastTrade = !ls.get(1).trim().isEmpty() ? numFormat.parse(ls.get(1)).doubleValue() : null;
@@ -112,12 +114,14 @@ public class StockRepository {
             Long turnoverBestMKD = !ls.get(7).trim().isEmpty() ? numFormat.parse(ls.get(7)).longValue() : null;
             Long totalTurnoverMKD = !ls.get(8).trim().isEmpty() ? numFormat.parse(ls.get(8)).longValue() : null;
 
-            return Optional.of(
+            retval = Optional.of(
                     new Observation
                             (date, lastTrade, max, min, avgPrice, chg, volume, turnoverBestMKD, totalTurnoverMKD)
             );
         } catch (ParseException exception) {
-            throw new RuntimeException(exception);
+            System.err.println(exception.getMessage());
         }
+
+        return retval;
     }
 }

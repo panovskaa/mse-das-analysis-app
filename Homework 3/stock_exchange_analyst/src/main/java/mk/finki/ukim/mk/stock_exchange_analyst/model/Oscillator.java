@@ -13,8 +13,8 @@ import java.util.function.Function;
 @Data
 @AllArgsConstructor
 public class Oscillator {
-    private String name;
-    private Double value;
+    private String                   name;
+    private Double                   value;
     private Function<Double, String> indicator;
 
     private static NumberFormat format = NumberFormat.getInstance(Locale.GERMAN);

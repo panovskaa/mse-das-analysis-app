@@ -1,6 +1,8 @@
 package mk.finki.ukim.mk.stock_exchange_analyst.repository;
 
 import jakarta.annotation.PostConstruct;
+import mk.finki.ukim.mk.stock_exchange_analyst.model.MovingAverage;
+import mk.finki.ukim.mk.stock_exchange_analyst.model.Oscillator;
 import mk.finki.ukim.mk.stock_exchange_analyst.model.TAPoint;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -17,6 +19,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class TAPointRepository {

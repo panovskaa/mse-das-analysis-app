@@ -24,7 +24,7 @@ public class TAServiceImpl implements TAService {
     @Override
     public TAPoint getLatest(String company) {
         return taPointRepository.latest(company).orElseThrow(() ->
-                new NoSuchCompanyException("No analysis available for " + company + ", due to insufficient & required data."));
+                new NoSuchCompanyException("No analytical data for " + company + ", due to insufficient data."));
     }
 
     @Override

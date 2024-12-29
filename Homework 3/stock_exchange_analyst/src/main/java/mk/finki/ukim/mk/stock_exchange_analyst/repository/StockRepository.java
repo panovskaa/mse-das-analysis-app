@@ -60,9 +60,9 @@ public class StockRepository {
     public List<Observation> getRecordsFromTo(String company, LocalDate from, LocalDate to) {
         return companies.get(company)
                 .stream()
-                .filter(obs -> obs.getDate().isBefore(to.plusDays(1))
+                .filter(obs -> obs.date().isBefore(to.plusDays(1))
                         &&
-                        obs.getDate().isAfter(from.minusDays(1)))
+                        obs.date().isAfter(from.minusDays(1)))
                 .sorted()
                 .toList();
     }

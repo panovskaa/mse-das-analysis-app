@@ -19,7 +19,7 @@ public class Observation implements Comparable<Observation> {
     private final Long      turnoverBestMKD;
     private final Long      totalTurnoverMKD;
 
-    private static NumberFormat format = NumberFormat.getInstance(Locale.GERMAN);
+    private final static NumberFormat format = NumberFormat.getInstance(Locale.GERMAN);
 
     public Observation(LocalDate date, Double lastTradePrice, Double max, Double min, Double avgPrice, Double chg, Long volume, Long turnoverBestMKD, Long totalTurnoverMKD) {
         this.date = date;
@@ -53,6 +53,7 @@ public class Observation implements Comparable<Observation> {
                 '}';
     }
 
+    // Used in thymeleaf views
     public String getFormattedNum(Object num) {
         if (num == null) {
             return "";

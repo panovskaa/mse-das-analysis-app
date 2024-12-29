@@ -144,7 +144,7 @@ if __name__ == '__main__':
         # removes all the possible nans from moving averages
         df = df.iloc[100:, :]
 
-        print(f"COMPANY: {company_name} analysis successful.")
+        print(f"COMPANY: {company_name} analysis SUCCESS")
 
         df.to_csv(f"{root}/ta/{company_name}_ta.csv", index=False)
 

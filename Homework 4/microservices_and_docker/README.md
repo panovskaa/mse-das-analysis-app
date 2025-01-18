@@ -2,7 +2,7 @@
 ## Steps
 
 1. [Download this directory](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Fddukoski%2Fmse-das-analysis-app%2Ftree%2Fmain%2FHomework%25204%2Fmicroservices_and_docker)
-2. and place it wherever suits you
+   and place it wherever suits you
 
 2. Open each of the 3 directories local to this README in the terminal, whilst having the Docker Daemon running:
    1. For `company_stock_microservice`:

@@ -1,5 +1,5 @@
 # Refactoring
-- - -
+
 ## 1. Readability
 
 - Method name changes and code comments to clear up vagueness (especially in repository layer)

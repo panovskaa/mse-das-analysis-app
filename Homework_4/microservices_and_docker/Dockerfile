@@ -21,7 +21,7 @@ COPY . /root/
 # TODO: log in to docker hub
 # See https://webapp.io/docs/advanced-workflows#logging-in-to-docker to learn how to log in to docker
 
-RUN REPEATABLE docker-compose build --parallel
+RUN docker-compose build --parallel
 RUN docker-compose up -d
 
 # TODO: change port to whatever is configured in your docker-compose.yml

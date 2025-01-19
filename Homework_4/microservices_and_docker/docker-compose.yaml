@@ -2,14 +2,14 @@ version: '3.7'
 
 services:
   eureka-server:
-    image: eureka-registry
+    image: elenapan/eureka-registry:latest
     ports:
       - "8761:8761"
     networks:
       - eureka-network
 
   stock_exchange_analyst:
-    image: analyst-ms
+    image: elenapan/analyst-ms:latest
     depends_on:
       - eureka-server
     volumes:
@@ -24,7 +24,7 @@ services:
       - eureka-network
 
   company_stock_microservice:
-    image: stock-ms
+    image: elenapan/stock-ms:latest
     depends_on:
       - eureka-server
       - stock_exchange_analyst

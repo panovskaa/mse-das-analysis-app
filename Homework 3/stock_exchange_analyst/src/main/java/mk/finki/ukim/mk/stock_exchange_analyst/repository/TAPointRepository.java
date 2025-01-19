@@ -38,7 +38,7 @@ public class TAPointRepository {
                 List<List<String>> indicators = readCSV(analysisCSV.toString());
                 indicators = indicators.subList(1, indicators.size());
 
-                long size = analysisCSV.toString().split("/").size();
+                int size = analysisCSV.toString().split("/").size();
 
                 String companyName = analysisCSV.toString().split("/")[size-1].split("\\.")[0].split("_")[0];
 

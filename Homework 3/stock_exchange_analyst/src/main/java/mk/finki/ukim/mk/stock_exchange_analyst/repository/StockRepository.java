@@ -41,8 +41,9 @@ public class StockRepository {
                 List<List<String>> companyData = readCSV(companyCSV.toString());
                 companyData = companyData.subList(1, companyData.size());
 
-                String companyName = companyCSV.toString().split("\\\\")[4].split("\\.")[0];
-
+                int size = companyCSV.toString().split("/").length;
+                String companyName = companyCSV.toString().split("/")[size-1].split("\\.")[0];
+                
                 List<Observation> observations = companyData.stream()
                         .map(this::createObservation)
                         .filter(Optional::isPresent)

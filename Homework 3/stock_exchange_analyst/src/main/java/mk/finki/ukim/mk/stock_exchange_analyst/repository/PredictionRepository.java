@@ -38,7 +38,8 @@ public class PredictionRepository {
                 List<String> predStrings = companyData.get(1);
 
                 System.out.println(predCSV);
-                String companyName = predCSV.toString().split("/")[6].split("\\.")[0].split("_")[0];
+                long size = predCSV.toString().split("/").size();
+                String companyName = predCSV.toString().split("/")[size-1].split("\\.")[0].split("_")[0];
 
                 List<Prediction> predictions = createPredictions(predStrings);
 

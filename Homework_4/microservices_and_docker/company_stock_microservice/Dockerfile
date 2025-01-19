@@ -7,4 +7,5 @@ RUN mvn clean package -DskipTests
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/*.jar ./app.jar
+COPY --from=build /app/src/main/resources/db /app/src/main/resources/db
 ENTRYPOINT ["java", "-jar", "./app.jar"]

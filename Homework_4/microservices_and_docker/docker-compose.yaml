@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
   eureka-server:
+    build: ./service-registry
     image: elenapan/eureka-registry:latest
     ports:
       - "8761:8761"
@@ -9,6 +10,7 @@ services:
       - eureka-network
 
   stock_exchange_analyst:
+    build: ./stock_exchange_analyst_ms
     image: elenapan/analyst-ms:latest
     depends_on:
       - eureka-server
@@ -24,6 +26,7 @@ services:
       - eureka-network
 
   company_stock_microservice:
+    build: ./company_stock_microservice
     image: elenapan/stock-ms:latest
     depends_on:
       - eureka-server

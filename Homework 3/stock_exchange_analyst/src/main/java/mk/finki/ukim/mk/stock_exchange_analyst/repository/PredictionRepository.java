@@ -2,13 +2,10 @@ package mk.finki.ukim.mk.stock_exchange_analyst.repository;
 
 import jakarta.annotation.PostConstruct;
 import mk.finki.ukim.mk.stock_exchange_analyst.model.Prediction;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import mk.finki.ukim.mk.stock_exchange_analyst.repository.utils.CSVReadingUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -20,8 +17,12 @@ import java.util.*;
 @Repository
 public class PredictionRepository {
 
-    @Value("${database.pred.path}")
+    @Value("${database.predict.path}")
     private String predPath;
+
+    public List<Prediction> getPredictionsOf(String company) {
+        return companies.getOrDefault(company, Collections.emptyList());
+    }
 
     private final Map<String, List<Prediction>> companies;
 
@@ -30,51 +31,19 @@ public class PredictionRepository {
     }
 
     @PostConstruct
-    public void update() {
+    public void update() throws IOException {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(predPath))) {
             for (Path predCSV : stream) {
-
                 List<List<String>> companyData = CSVReadingUtil.readCSV(predCSV.toString());
                 List<String> predStrings = companyData.get(1);
 
-                System.out.println(predCSV);
                 String companyName = predCSV.toString().split("/")[6].split("\\.")[0].split("_")[0];
 
                 List<Prediction> predictions = createPredictions(predStrings);
 
                 companies.put(companyName, predictions);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-
-    }
-
-    public List<Prediction> getPredictionsOf(String company) {
-        if (!companies.containsKey(company)) {
-            return null;
-        }
-        return companies.get(company);
-    }
-
-    private List<List<String>> readCSV(String company) {
-        List<List<String>> records = new ArrayList<>();
-        try {
-
-            FileReader reader = new FileReader(String.format("%s", company));
-            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-
-            for (CSVRecord csvRecord : csvParser) {
-                List<String> row = new ArrayList<>();
-                csvRecord.forEach(row::add);
-                records.add(row);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return records;
     }
 
     private List<Prediction> createPredictions(List<String> ls) {

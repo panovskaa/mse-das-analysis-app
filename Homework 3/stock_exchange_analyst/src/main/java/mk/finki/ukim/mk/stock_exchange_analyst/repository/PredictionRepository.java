@@ -34,10 +34,10 @@ public class PredictionRepository {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(predPath))) {
             for (Path predCSV : stream) {
 
-                List<List<String>> companyData = readCSV(predCSV.toString());
+                List<List<String>> companyData = CSVReadingUtil.readCSV(predCSV.toString());
                 List<String> predStrings = companyData.get(1);
 
-                String companyName = predCSV.toString().split("\\\\")[4].split("\\.")[0].split("_")[0];
+                String companyName = predCSV.toString().split("/")[6].split("\\.")[0].split("_")[0];
 
                 List<Prediction> predictions = createPredictions(predStrings);
 

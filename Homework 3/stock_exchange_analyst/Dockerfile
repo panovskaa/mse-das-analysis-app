@@ -16,7 +16,6 @@ COPY --from=build /app/src/main/resources/ ./src/main/resources/
 COPY --from=python-env /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=python-env /usr/local/bin/python3.12 /usr/local/bin/python3.12
 COPY --from=python-env /usr/local/bin/pip3.12 /usr/local/bin/pip3.12
-RUN cat ./src/main/resources/pred/ADIN_pr.csv
 
 RUN ln -s /usr/local/bin/python3.12 /usr/local/bin/python && \
     ln -s /usr/local/bin/pip3.12 /usr/local/bin/pip && \

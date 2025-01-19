@@ -16,12 +16,11 @@ RUN curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-c
     chmod 777 /usr/local/bin/docker-compose
 
 # copy the root (i.e., repository root) to /root in the runner
-COPY . /root/
+COPY . ./
 
 # TODO: log in to docker hub
 # See https://webapp.io/docs/advanced-workflows#logging-in-to-docker to learn how to log in to docker
 
-WORKDIR "/root"
 RUN docker-compose build
 
 # TODO: change port to whatever is configured in your docker-compose.yml

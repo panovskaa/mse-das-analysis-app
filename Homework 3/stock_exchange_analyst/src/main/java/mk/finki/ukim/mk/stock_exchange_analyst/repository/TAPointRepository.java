@@ -38,7 +38,7 @@ public class TAPointRepository {
                 List<List<String>> indicators = readCSV(analysisCSV.toString());
                 indicators = indicators.subList(1, indicators.size());
 
-                String companyName = analysisCSV.toString().split("\\\\")[4].split("\\.")[0].split("_")[0];
+                String companyName = analysisCSV.toString().split("/")[6].split("\\.")[0].split("_")[0];
 
                 List<TAPoint> taPoints = indicators.stream()
                         .map(this::createTAPoint)

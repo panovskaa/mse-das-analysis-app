@@ -1,4 +1,4 @@
-FROM vm/ubuntu:18.04
+FROM ubuntu:18.04
 
 # install docker-ce (from tutorial for ubuntu)
 RUN apt-get update && \
